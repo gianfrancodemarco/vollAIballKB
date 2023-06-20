@@ -1,0 +1,4 @@
+-e .
+Flask
+flask-cors
+pyswip
