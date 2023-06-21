@@ -13,24 +13,26 @@ from pyswip import Prolog
 app = Flask(__name__)
 knowledgeBase = Prolog()
 
-# knowledgeBase.assertz('acted("Miracle at St. Anna", "Michael DenDekker")')
-# knowledgeBase.assertz('acted("Miracle at St. Anna", "sad")')
-# for a in knowledgeBase.query('acted("Miracle at St. Anna", X)'):
-#     print(a)
-
 logging.info(f'Started flask app: {__name__}')
+
+PREDICATES = [
+    'team(X)',
+    'player(X,Y)',
+    'touchPlayerAtAction(X,Y)',
+    'touchPlayerAtAction(X,X)'
+]
 
 @app.route('/', methods=['GET'])
 def health() -> Response:
     return jsonify({'status': 'OK'})
 
+# NOTE: IMPORTANT!
+# Add every new predicate here
 @app.route('/reset', methods=['POST'])
 def retractall() -> Response:
     logging.warning(f'Resetting knowledge base')
-    global knowledgeBase
-    # not working
-    knowledgeBase = Prolog()
-    #knowledgeBase.retractall()
+    for predicate in PREDICATES:
+        knowledgeBase.retractall(predicate)
     return jsonify({'status': 'OK'})
 
 
