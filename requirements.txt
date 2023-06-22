@@ -1,4 +1,4 @@
+pyswip @ git+https://github.com/yuce/pyswip@master#egg=pyswip
 -e .
 Flask
-flask-cors
-pyswip
+# debugpy
