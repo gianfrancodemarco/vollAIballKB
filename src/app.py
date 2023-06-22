@@ -15,9 +15,11 @@ knowledgeBase = Prolog()
 
 logging.info(f'Started flask app: {__name__}')
 
+# {"query":"player(Y),playsInTeam(Y, blue)"}
 PREDICATES = [
     'team(X)',
-    'player(X,Y)',
+    'player(X)',
+    'playsInTeam(X,Y)',
     'touchPlayerAtAction(X,Y)',
     'touchPlayerAtAction(X,X)'
 ]
