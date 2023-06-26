@@ -12,8 +12,13 @@ from logger import *
 from pyswip import Prolog
 
 app = Flask(__name__)
+
 knowledgeBase = Prolog()
-knowledgeBase.consult("knowledge_base.pl")
+knowledgeBase.dynamic("scored/1")
+knowledgeBase.assertz("""narrative(score, Text) :- format(atom(Text), "Total score: ~w : ~w.", [score(1), score(0)])""")
+knowledgeBase.assertz("""narrative(scored, Text) :- scored(Player), format(atom(Text), "~w scored.", [Player])""")
+knowledgeBase.assertz("""all_narratives(Narratives) :- findall(Text, narrative(_, Text), Narratives)""")
+
 debugpy.listen(("0.0.0.0", 5678))
 
 logging.info(f'Started flask app: {__name__}')
@@ -35,7 +40,6 @@ PREDICATES = [
 QUERY = {
     'nice_action':'touchPlayerAtAction(_, <episode_name>, _, 2).',
     'last_episode': 'touchPlayerAtAction(_, Episode, _, _), \+ (touchPlayerAtAction(_, Episode2, _, _), Episode2 > Episode).'
-
 }
 
 
@@ -69,12 +73,8 @@ def queryz() -> Response:
 def narrative() -> Response:
     file_path = "narrative.txt"
     query = request.json['query']
-    query = f'write_narrative_to_file("narrative.txt", asdasdas)'
-    knowledgeBase.assertz(query)
-    result = []
-    with open(file_path, "r") as file:
-        for line in file:
-            result.append(line.strip().split())
-    return jsonify({'status': 'OK', 'response': result})
+    results = list(knowledgeBase.query(f"all_narratives(Narratives)"))
+    results = [result["Narratives"] for result in results] 
+    return jsonify({'status': 'OK', 'response': results})
 
 # find -O3 -L . -name "*.txt"
