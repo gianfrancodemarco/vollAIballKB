@@ -10,4 +10,5 @@ COPY src src
 COPY requirements.txt requirements.txt
 COPY setup.py setup.py
 RUN pip3 install -r requirements.txt
+COPY knowledge_base.pl knowledge_base.pl
 ENTRYPOINT [ "python3", "-m", "flask", "--app", "src/app.py", "run", "--host", "0.0.0.0"]
