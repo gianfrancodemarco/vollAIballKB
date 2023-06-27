@@ -69,12 +69,9 @@ def queryz() -> Response:
     logging.info(f'Response: {result}')
     return jsonify({'status': 'OK', 'response': result})
 
-@app.route('/narrative', methods=['POST'])
+@app.route('/narrative', methods=['GET'])
 def narrative() -> Response:
-    file_path = "narrative.txt"
-    query = request.json['query']
     results = list(knowledgeBase.query(f"all_narratives(Narratives)"))
-    results = [result["Narratives"] for result in results] 
-    return jsonify({'status': 'OK', 'response': results})
+    return jsonify({'status': 'OK', 'response': results[0]["Narratives"]})
 
 # find -O3 -L . -name "*.txt"
