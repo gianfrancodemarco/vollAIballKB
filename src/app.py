@@ -23,7 +23,8 @@ logging.info(f'Started flask app: {__name__}')
 # can share a value
 PREDICATES = [
     'team(X)',
-    'player(X,Y)',
+    'player(X)',
+    'playsinteam(X,Y)',
     'touchplayerataction(X,Y,W,Z)',
     'hitoutofbounds(X,Y,Z)',
     'hitbluegoal(X,Y,Z)',
