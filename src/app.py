@@ -9,15 +9,9 @@ sys.path.append(module_path)
 # standard
 from flask import Flask, request, jsonify, Response
 from logger import *
-from pyswip import Prolog
+from knowledge_base import knowledge_base
 
 app = Flask(__name__)
-
-knowledgeBase = Prolog()
-knowledgeBase.dynamic("scored/1")
-knowledgeBase.assertz("""narrative(score, Text) :- format(atom(Text), "Total score: ~w : ~w.", [score(1), score(0)])""")
-knowledgeBase.assertz("""narrative(scored, Text) :- scored(Player), format(atom(Text), "~w scored.", [Player])""")
-knowledgeBase.assertz("""all_narratives(Narratives) :- findall(Text, narrative(_, Text), Narratives)""")
 
 debugpy.listen(("0.0.0.0", 5678))
 
@@ -25,23 +19,19 @@ logging.info(f'Started flask app: {__name__}')
 
 # NOTE: IMPORTANT!
 # Add every new predicate here
+# This should be completed with every combination when 2 or more variables
+# can share a value
 PREDICATES = [
     'team(X)',
     'player(X,Y)',
-    'touchPlayerAtAction(X,Y,W,Z)',
-    'touchPlayerAtAction(X,X,W,Z)',
-    'hitOutOfBounds(X,Y,Z)',
-    'hitGoal(X,Y,Z)',
-    'hitIntoBlueArea(X,Y,Z)',
-    'hitIntoRedArea(X,Y,Z)',
-    'hitWall(X,Y,Z)'
+    'touchplayerataction(X,Y,W,Z)',
+    'hitoutofbounds(X,Y,Z)',
+    'hitbluegoal(X,Y,Z)',
+    'hitredgoal(X,Y,Z)',
+    'hitintobluearea(X,Y,Z)',
+    'hitintoredarea(X,Y,Z)',
+    'hitwall(X,Y,Z)'
 ]
-
-QUERY = {
-    'nice_action':'touchPlayerAtAction(_, <episode_name>, _, 2).',
-    'last_episode': 'touchPlayerAtAction(_, Episode, _, _), \+ (touchPlayerAtAction(_, Episode2, _, _), Episode2 > Episode).'
-}
-
 
 @app.route('/', methods=['GET'])
 def health() -> Response:
@@ -51,27 +41,28 @@ def health() -> Response:
 def retractall() -> Response:
     logging.warning(f'Resetting knowledge base')
     for predicate in PREDICATES:
-        knowledgeBase.retractall(predicate)
+        knowledge_base.retractall(predicate)
     return jsonify({'status': 'OK'})
 
 @app.route('/assert', methods=['POST'])
 def assertz() -> Response:
     logging.info(f'Asserting fact: {request.json["fact"]}')
-    fact = request.json['fact']
-    knowledgeBase.assertz(fact)
+    fact = request.json['fact'].lower()
+    logging.info("Asserting: " + fact)
+    knowledge_base.assertz(fact)
     return jsonify({'status': 'OK'})
 
 @app.route('/query', methods=['POST'])
 def queryz() -> Response:
     logging.info(f'Querying: {request.json["query"]}')
     query = request.json['query']
-    result = list(knowledgeBase.query(query))
+    result = list(knowledge_base.query(query))
     logging.info(f'Response: {result}')
     return jsonify({'status': 'OK', 'response': result})
 
 @app.route('/narrative', methods=['GET'])
 def narrative() -> Response:
-    results = list(knowledgeBase.query(f"all_narratives(Narratives)"))
+    results = list(knowledge_base.query(f"all_narratives(Narratives)"))
     return jsonify({'status': 'OK', 'response': results[0]["Narratives"]})
 
 # find -O3 -L . -name "*.txt"
