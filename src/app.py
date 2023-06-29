@@ -31,7 +31,8 @@ PREDICATES = [
     'hitredgoal(X,Y,Z)',
     'hitintobluearea(X,Y,Z)',
     'hitintoredarea(X,Y,Z)',
-    'hitwall(X,Y,Z)'
+    'hitwall(X,Y,Z)',
+    'doubletouch(X,Y,Z)'
 ]
 
 @app.route('/', methods=['GET'])
