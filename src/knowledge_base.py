@@ -4,13 +4,16 @@ from pyswip import Prolog
 knowledge_base = Prolog()
 
 knowledge_base.dynamic("team/1")
-knowledge_base.dynamic("player/2")
+knowledge_base.dynamic("player/1")
 knowledge_base.dynamic("playsinteam/2")
 knowledge_base.dynamic("hitbluegoal/3")
 knowledge_base.dynamic("hitredgoal/3")
 knowledge_base.dynamic("hitoutofbounds/3")
 knowledge_base.dynamic("hitwall/3")
 knowledge_base.dynamic("doubletouch/3")
+knowledge_base.dynamic("narrative/1")
+knowledge_base.dynamic("narrative/2")
+knowledge_base.dynamic("touchplayerataction/4")
 
 # Setup information
 knowledge_base.assertz("""narrative(Text) :- team(X), format(atom(Text), "Team: ~w.", [X])""")
@@ -51,5 +54,17 @@ knowledge_base.assertz("""narrative(Text) :-
     format(atom(Text), "Blue ~w - ~w Red", [BlueScore, RedScore])"""
 )
 
-knowledge_base.assertz("""all_narratives(Narratives) :- findall(Text, narrative(Text), Narratives)""")
+# Nice actions
+knowledge_base.assertz("""ace(X1, Y) :- hitredgoal(X1, Y, _), playsinteam(X1, red), touchplayerataction(X1, Y, _, _), playsinteam(X2, blue), \+touchplayerataction(X2, Y, _, _)""")
+knowledge_base.assertz("""ace(X1, Y) :- hitbluegoal(X1, Y, _), playsinteam(X1, blue), touchplayerataction(X1, Y, _, _), playsinteam(X2, red), \+touchplayerataction(X2, Y, _, _)""")
+knowledge_base.assertz("""narrative(Text) :- ace(X, Y), format(atom(Text), "Ace for player ~w (point ~w)", [X, Y])""")
 
+knowledge_base.assertz("""greataction(Y) :- 
+    player(X1),
+    \+doubletouch(X1, _, _),
+    touchplayerataction(_, Y, _, _),
+    aggregate_all(count, touchplayerataction(_, Y, _, _), DribblesInAction),
+    DribblesInAction > 2""")
+knowledge_base.assertz("""narrative(Text) :- greataction(Y), format(atom(Text), "Great action! (point ~w)", [Y])""")
+
+knowledge_base.assertz("""all_narratives(Narratives) :- findall(Text, narrative(Text), Narratives)""")
