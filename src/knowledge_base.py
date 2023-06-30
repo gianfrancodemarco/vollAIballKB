@@ -51,7 +51,7 @@ knowledge_base.assertz("""narrative(Text) :-
     plus(RedScorePartial1, BlueOutOfBounds, RedScorePartial2),
     plus(RedScorePartial2, BlueDoubleTouches, RedScore),
 
-    format(atom(Text), "Blue ~w - ~w Red", [BlueScore, RedScore])"""
+    format(atom(Text), "Red ~w - ~w Blue", [RedScore, BlueScore])"""
 )
 
 # Nice actions
