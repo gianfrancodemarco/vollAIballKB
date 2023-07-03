@@ -12,7 +12,6 @@ knowledge_base.dynamic("hitoutofbounds/3")
 knowledge_base.dynamic("hitwall/3")
 knowledge_base.dynamic("doubletouch/3")
 knowledge_base.dynamic("narrative/1")
-knowledge_base.dynamic("narrative/2")
 knowledge_base.dynamic("touchplayerataction/4")
 
 # Setup information
