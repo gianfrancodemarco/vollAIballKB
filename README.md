@@ -1,5 +1,5 @@
-Unity Project for the project vollAIball.
-The backend is [here](https://github.com/gianfrancodemarco/vollAIballKB).
+Backend for the project vollAIball.
+The Unity Project is [here](https://github.com/gianfrancodemarco/vollAIball).
 
 This project explores the realm of applying artificial intelligence (AI) techniques to train autonomous agents at the game of volleyball. 
 It consists of a Unity 3D environment, crafted on purpose, where agents are trained using the ML-Agents library and the Proximal Policy Optimization (PPO) algorithm. 
